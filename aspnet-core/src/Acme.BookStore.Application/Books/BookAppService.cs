@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Acme.BookStore.Parties;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,10 +21,45 @@ namespace Acme.BookStore.Books
             CreateUpdateBookDto>, //Used to create/update a book
         IBookAppService //implement the IBookAppService
         {
-            public BookAppService(IRepository<Book, Guid> repository)
-                : base(repository)
+        IRepository<Book, Guid> bookrepository;
+        IRepository<Partie, Guid> partierepository;
+        public BookAppService(IRepository<Book, Guid> bookrepository, IRepository<Partie, Guid> partierepository)
+                : base(bookrepository)
             {
 
+            this.bookrepository = bookrepository;
+            this.partierepository = partierepository;
             }
+
+        public async Task<CombainedData>  GetCombainedData()
+        {
+            var bookList = await bookrepository.GetListAsync();
+            var partieList = await partierepository.GetListAsync();
+
+            var result = new CombainedData();
+
+            
+
+            result.Book = ObjectMapper.Map<Book, BookDto>(bookList[0]);
+            result.Partie = ObjectMapper.Map<Partie, PartieDto>(partieList[0]);
+
+
+            return result;
         }
+
+    }// class emd
+
+
+    public class CombainedData
+    {
+
+        public BookDto Book { get; set; }   
+
+
+
+        public PartieDto Partie { get; set; }
+    }
+
+    
+
 }

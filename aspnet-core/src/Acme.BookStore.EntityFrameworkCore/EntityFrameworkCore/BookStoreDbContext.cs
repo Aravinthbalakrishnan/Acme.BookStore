@@ -1,4 +1,6 @@
 ﻿using Acme.BookStore.Books;
+using Acme.BookStore.Parties;
+using Acme.BookStore.UserTypes;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -54,6 +56,12 @@ public class BookStoreDbContext :
 
     public DbSet<Book> Books { get; set; }
 
+    public DbSet<UserType> UserTypes { get; set; }
+    public DbSet<Partie> Parties { get; set; }
+
+
+
+
     #endregion
 
     public BookStoreDbContext(DbContextOptions<BookStoreDbContext> options)
@@ -94,7 +102,25 @@ public class BookStoreDbContext :
             b.Property(x => x.Name).IsRequired().HasMaxLength(128);
         });
 
+        builder.Entity<UserType>(b =>
+        {
+            b.ToTable(BookStoreConsts.DbTablePrefix + "UserTypes",
+                BookStoreConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.Name).IsRequired().HasMaxLength(100);
+            b.Property(x => x.Code).IsRequired().HasMaxLength(100);
 
+        });
+
+        builder.Entity<Partie>(b =>
+        {
+            b.ToTable(BookStoreConsts.DbTablePrefix + "Parties",
+                BookStoreConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.Name).IsRequired().HasMaxLength(100);
+            b.Property(x => x.Code).IsRequired().HasMaxLength(100);
+
+        });
 
 
 
